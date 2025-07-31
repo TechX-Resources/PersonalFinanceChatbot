@@ -1,11 +1,12 @@
-# Naive Bayes Classifier for Budget Categorization
-# This script uses a Naive Bayes classifier to categorize budget transactions based on their descriptions.
+# Logistic Regression for Budget Categorization
+# This script uses a Logistic Regression model to categorize budget transactions based on their descriptions.
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.naive_bayes import MultinomialNB
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix
+
 
 # Load and prepare the dataset
 df = pd.read_csv("DataHandling/cleaned_full_personal_finance.csv")
@@ -37,12 +38,17 @@ vectorizer = TfidfVectorizer(
 X_train_vec = vectorizer.fit_transform(X_train)
 X_test_vec = vectorizer.transform(X_test)
 
-# Train the Naive Bayes model
-nb_model = MultinomialNB()
-nb_model.fit(X_train_vec, y_train)
+# Train logistic regression
+log_reg = LogisticRegression(
+    max_iter=1000,
+    C=1.0,                        # Regularization strength
+    class_weight='balanced',     # Handle class imbalance
+    random_state=42
+)
+log_reg.fit(X_train_vec, y_train)
 
 # Evaluate the model
-y_pred = nb_model.predict(X_test_vec)
+y_pred = log_reg.predict(X_test_vec)
 
 print("Classification Report:")
 print(classification_report(y_test, y_pred))
